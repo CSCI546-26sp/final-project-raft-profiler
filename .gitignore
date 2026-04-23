@@ -1,0 +1,45 @@
+# Byte-compiled / caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+.env
+.env.*
+
+# Packaging
+*.egg-info/
+.eggs/
+dist/
+build/
+wheels/
+
+# Tools & tests
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Ray / local runs
+**/session_latest
+**/logs/
+raft-profiler/output/
+raft-profiler/log.txt
+*.log
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/

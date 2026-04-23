@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+ENV/
+
+# IDEs
+.idea/
+.vscode/
+.history/
+*.swp
+*.swo
+
+# Generated artifacts (run benchmarks from repo root)
+output/
+*.log
+log.txt
+
+# Ray
+session_latest
+logs/
+
+# One-off profiler outputs at package root (if written there)
+critical_path_profile.json
+*_dashboard.html
