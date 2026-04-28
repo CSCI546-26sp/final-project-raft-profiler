@@ -1,7 +1,3 @@
-"""
-Live streaming critical path: background thread polls Ray's State API
-and recomputes the critical path as tasks complete.
-"""
 
 from __future__ import annotations
 import threading
@@ -9,8 +5,6 @@ import time
 from ray.util.state import list_tasks
 
 from .critical_path import compute_critical_path, CriticalPathResult
-
-
 class LiveProfiler:
     def __init__(self, dep_graph: dict, poll_interval: float = 2.0):
         self._dep_graph = dep_graph

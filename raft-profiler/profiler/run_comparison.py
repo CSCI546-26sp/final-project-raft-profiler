@@ -82,9 +82,12 @@ def compare_runs(before_path, after_path):
     after = load_run(after_path)
 
     def group_by_func(timing):
+                                                                             
+                                                                    
         groups = defaultdict(list)
         for tid, info in timing.items():
-            groups[info["name"]].append(info["exec_ms"])
+            key = info.get("func_name") or info.get("name") or "unknown"
+            groups[key].append(info["exec_ms"])
         return groups
 
     before_groups = group_by_func(before["timing"])

@@ -4,7 +4,7 @@ import time
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from profiler import profile, print_critical_path
+from profiler import profile, print_critical_path, track_function
 ray.init(num_cpus=4, ignore_reinit_error=True)
 profile()
 import modin.pandas as pd
@@ -13,9 +13,10 @@ data = {
     "value": np.random.rand(102),
 }
 df = pd.DataFrame(data)
+@track_function
 def heavy_work(group):
     if group.name == "A":
-        time.sleep(5)  
+        time.sleep(5)
     return group.sum()
 
 print("[demo] Starting heavy skewed GroupBy...")

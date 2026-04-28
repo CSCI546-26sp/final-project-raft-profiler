@@ -1,4 +1,3 @@
-# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -20,27 +19,27 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
 venv/
 .venv/
 ENV/
 
-# IDEs
 .idea/
 .vscode/
 .history/
 *.swp
 *.swo
 
-# Generated artifacts (run benchmarks from repo root)
 output/
 *.log
 log.txt
 
-# Ray
 session_latest
 logs/
 
-# One-off profiler outputs at package root (if written there)
 critical_path_profile.json
 *_dashboard.html
+*.tex
+extensions.json
+settings.json
+*.png
+*.vscode/*

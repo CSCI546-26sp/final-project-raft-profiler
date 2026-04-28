@@ -6,15 +6,16 @@ A critical path profiler for Ray jobs. It answers one question Ray's dashboard d
 
 ```
 raft-profiler/
-  profiler/           # Library: dependency capture, critical path, dashboard
-  benchmarks/         # Example Ray workloads (run from this directory)
-  requirements.txt    # Dependency set for reproducible installs
-  output/             # Generated HTML/JSON (gitignored)
+  profiler/
+  benchmarks/
+  requirements.txt
+  report/
+  output/
 ```
 
-## Setup
+`output/` holds generated HTML and JSON (gitignored). The course report LaTeX lives under `report/`.
 
-Install pinned dependencies (recommended for grading or reproduction):
+## Setup
 
 ```bash
 pip install -r requirements.txt
@@ -26,82 +27,103 @@ Or install Ray directly:
 pip install ray[default]
 ```
 
-For the Modin benchmark only:
+For the Modin benchmark:
 
 ```bash
 pip install modin[ray]
 ```
 
-Ray shows you task timelines and resource usage. But if your job took 12 seconds, it doesn't tell you whether speeding up any particular task would have helped. This profiler does. It finds the longest chain of dependent tasks through the execution DAG — the critical path — and highlights it. Tasks not on that chain could be 10x faster and it wouldn't change a thing.
+For the Daft benchmark, install Daft per [Daft docs](https://docs.daft.ai/) and use the dependencies your `daft-run.py` expects.
+
+Ray shows task timelines and resource usage but not whether speeding up a particular task would shorten the job. This profiler finds the longest chain of dependent tasks (the critical path) and highlights it. Tasks not on that chain could be much faster without changing completion time under the captured dependency model.
 
 ## How it works
 
-At submission time, the profiler wraps `ray.remote` to intercept every task call and record which ObjectRefs were passed as arguments. This gives it the actual data dependencies (not just the spawn parent that Ray's State API tracks). After the job finishes, it pulls timing from the State API, builds the dependency DAG, runs a topological DP to find the longest path, and writes a dashboard.
+At submission time the profiler wraps `ray.remote`, records `ObjectRef` arguments as dependency edges, then after the job finishes pulls timings from Ray's State API, builds the graph, runs a longest-path DP, and writes HTML.
 
-Integration is two lines:
+Integration:
 
 ```python
 import ray
 from profiler import profile, print_critical_path
 
 ray.init()
-profile()          # call before defining any @ray.remote tasks
+profile()
 
-# ... your existing code, unchanged ...
-
-print_critical_path()   # call at the end
+print_critical_path()
 ```
+
+Optional: decorate hot helpers with `track_function` (see `user_fn_tracker.py`) so the dashboard can show user Python functions per task.
 
 ## Running the benchmarks
 
-All benchmarks are in `benchmarks/` and should be run from the project root.
+Run from the `raft-profiler` directory.
 
-**Map-reduce** — reducers depend on all mappers via ObjectRefs:
+**Map-reduce**
+
 ```bash
 python benchmarks/mapreduce.py
 python benchmarks/mapreduce.py --inject-fault 1 --fault-delay 2.0
 ```
 
-**Batch prediction** — one loader feeds N parallel predictors. Tests shared bottleneck vs single-branch bottleneck:
+**Batch prediction**
+
 ```bash
-python benchmarks/batch_prediction.py --fault-type loader   --fault-delay 2.0
+python benchmarks/batch_prediction.py --fault-type loader --fault-delay 2.0
 python benchmarks/batch_prediction.py --fault-type predictor --fault-delay 2.0
 ```
 
-**Tree reduce** — binary tree of aggregations, log₂(N) depth:
+**Tree reduce**
+
 ```bash
 python benchmarks/tree_reduce.py --inject-fault 0 --fault-delay 2.0
 ```
 
-**RL straggler** — rollout workers feed a learner. One seed runs 35x longer:
+**RL straggler**
+
 ```bash
 python benchmarks/rl_straggler.py
 ```
 
-**Pi estimation** — fully parallel (no deps). Critical path is always just the slowest task:
+**Pi estimation**
+
 ```bash
 python benchmarks/pi_estimation.py
 ```
 
-**Modin data skew** — groupby on a skewed dataset run through Modin:
+**Modin skew**
+
 ```bash
 python benchmarks/modin_skew.py
 ```
 
-Dashboards are written to `output/`.
+**Daft on Ray**
+
+```bash
+python benchmarks/daft-run.py
+```
+
+**Parameter server (demo)**
+
+```bash
+python benchmarks/parameter_server.py --mode sync
+python benchmarks/parameter_server.py --mode async --inject-fault 1 --fault-delay 2.0
+```
+
+Dashboards default under `output/` when benchmarks pass `output_html=...`; some scripts use paths like `output/mapreduce_dashboard.html`.
 
 ## What the dashboard shows
 
-Three tabs:
-
-- **Timeline** — Gantt view. Critical path tasks are red, everything else is blue. Each bar is split into waiting time (before the task started executing) and compute time.
-- **DAG** — Force-directed graph of the dependency structure. Critical path edges are red. You can drag nodes around.
-- **Breakdown table** — Sortable table with waiting/compute split per task, CP value, and a mini bar chart.
+- **Timeline** — Gantt-style bars; critical-path tasks emphasized; segments for waiting vs compute where breakdown data exists.
+- **DAG** — Force-directed dependency graph; critical-path edges highlighted.
+- **Breakdown table** — Sortable columns including optional **User fn** (from `track_function`) and straggler hints where applicable.
 
 ## Limitations
 
-**Ray Core only.** The profiler captures dependencies by inspecting ObjectRef arguments at the call site. Ray Tune, Ray AIR, and Ray Serve submit tasks internally without exposing ObjectRefs at the user level, so the dependency graph can't be built automatically for those frameworks.
+Ray Core emphasis: dependencies come from `ObjectRef` arguments at user-visible `remote` calls. Frameworks that hide refs may yield incomplete graphs.
 
-**Post-hoc only.** Timing data comes from the State API after the job finishes. There's no live/streaming view.
+Timing is collected after the job completes via the State API (post-hoc snapshot).
 
-**Nested containers.** Dependencies inside dicts or deeply nested structures won't be detected. The profiler walks one level into lists and tuples.
+Nested dicts are not walked for refs; lists and tuples are unpacked one level.
+
+Third-party pipelines (e.g. Daft, Modin internals) may overlap driver-side tasks with worker compute; interpret CP together with timelines and labels.

@@ -1,7 +1,3 @@
-"""
-Straggler detection: flags tasks on the critical path whose execution
-time is abnormally high compared to other invocations of the same function.
-"""
 
 from __future__ import annotations
 from dataclasses import dataclass
@@ -38,30 +34,34 @@ def detect_stragglers(
     critical_path_ids: list[str],
     threshold:         float = 3.0,
 ) -> list[StragglerInfo]:
+    def _group_key(info: dict) -> str:
+        return info.get("func_name") or info.get("name") or "unknown"
+
     groups: dict[str, list[float]] = defaultdict(list)
     for tid, info in timing.items():
-        groups[info["name"]].append(info["exec_ms"])
+        groups[_group_key(info)].append(info["exec_ms"])
 
     stats: dict[str, tuple[float, float, int]] = {}
-    for func_name, times in groups.items():
+    for key, times in groups.items():
         med = _median(times)
         mad = _mad(times, med)
-        stats[func_name] = (med, mad, len(times))
+        stats[key] = (med, mad, len(times))
 
     stragglers: list[StragglerInfo] = []
     for tid in critical_path_ids:
         if tid not in timing: continue
         info = timing[tid]
-        func_name = info["name"]
+        key = _group_key(info)
+        report_name = info.get("name") or key
         exec_ms = info["exec_ms"]
-        med, mad, count = stats.get(func_name, (0, 0, 0))
+        med, mad, count = stats.get(key, (0, 0, 0))
         if count < 2: continue
         effective_mad = max(mad, 1.0)
         distance = (exec_ms - med) / effective_mad
         if distance > threshold:
             ratio = exec_ms / med if med > 0 else float("inf")
             stragglers.append(StragglerInfo(
-                task_id=tid, func_name=func_name, exec_ms=exec_ms,
+                task_id=tid, func_name=report_name, exec_ms=exec_ms,
                 median_ms=med, mad_ms=mad, ratio=ratio, sibling_count=count,
             ))
     return stragglers

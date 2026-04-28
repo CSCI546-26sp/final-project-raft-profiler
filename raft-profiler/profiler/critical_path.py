@@ -1,8 +1,6 @@
 from __future__ import annotations
 from collections import deque, defaultdict
 from dataclasses import dataclass, field
-
-
 @dataclass
 class CriticalPathResult:
     path:      list[str]               
@@ -63,14 +61,11 @@ def compute_critical_path(
         start_ms = timing[tid]["start_ms"]
         best_dep    = None
         best_dep_cp = 0.0
-        
-        # Step 1A: Try to find explicit dependencies first (Modin / Ray Data)
+    
         for dep in resolved_deps.get(tid, []):
             if dep in cp_value and cp_value[dep] > best_dep_cp:
                 best_dep_cp = cp_value[dep]
                 best_dep    = dep
-        
-        # Step 1B: The Fallback Heuristic (Daft / Hidden Actors)
         if best_dep is None:
             min_time_gap = float('inf')
             for prev_tid, prev_timing in timing.items():
@@ -86,13 +81,10 @@ def compute_critical_path(
                     resolved_deps[tid] = []
                 if best_dep not in resolved_deps[tid]:
                     resolved_deps[tid].append(best_dep)
-
-        # Step 2: Calculate Scheduling Delay based on the FINAL best_dep
         if best_dep is not None:
             gap = start_ms - timing[best_dep]["end_ms"]
             scheduling_delay = max(0.0, gap) 
         else:
-            # If STILL None, it's the absolute first task in the entire job
             scheduling_delay = max(0.0, start_ms - job_start)
             
         cp_value[tid] = exec_ms + best_dep_cp + scheduling_delay

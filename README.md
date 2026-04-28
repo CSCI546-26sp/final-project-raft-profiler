@@ -1,33 +1,32 @@
 # CS 546 Final Project — Raft Profiler
 
-This repository is the course final for **CS 546**: a small workspace that contains **raft-profiler**, a post-hoc **critical path profiler for [Ray](https://www.ray.io/)** jobs.
+Course workspace containing **raft-profiler**: a post-hoc **critical path profiler for [Ray](https://www.ray.io/)** jobs.
 
-## What lives here
+## Contents
 
 | Path | Purpose |
 |------|--------|
-| [`raft-profiler/`](raft-profiler/) | Profiler library, HTML dashboard, and benchmark scripts |
-| [`raft-profiler/README.md`](raft-profiler/README.md) | Full design notes, API usage, benchmark commands, and limitations |
+| [`raft-profiler/`](raft-profiler/) | Library, benchmarks, HTML dashboard generator |
+| [`raft-profiler/README.md`](raft-profiler/README.md) | Setup, how to run benchmarks, limitations |
+| [`raft-profiler/report/`](raft-profiler/report/) | Course report (`report.tex`; build PDF locally or on Overleaf) |
 
 ## Quick start
 
-Use **Python 3.10+** (Ray-supported). From the `raft-profiler` directory:
+Python **3.10+**. From `raft-profiler/`:
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-python benchmarks\mapreduce.py
+python benchmarks/mapreduce.py
 ```
 
-On macOS or Linux, activate the venv with `source .venv/bin/activate`.
+On macOS/Linux: `source .venv/bin/activate`.
 
-Generated dashboards and JSON artifacts go under `raft-profiler/output/` (ignored by git).
+Generated dashboards usually go under `raft-profiler/output/` (ignored by git unless committed).
 
-## Why this project
+## Idea
 
-Ray’s dashboard shows timelines and utilization, but it does not answer: *which tasks actually bounded wall-clock time?* The profiler builds a dependency graph from **ObjectRef** edges captured at task submission, combines it with Ray’s **State API** timings, and computes the **longest path** through the DAG. That path is the critical path: the set of tasks whose cumulative delay determines when the job finished.
+Ray’s UI shows timelines and utilization, not which tasks bounded wall-clock time. This project records ref edges at submission, combines them with State API timings, computes the weighted longest path (critical path), and renders a static HTML report.
 
-## License and course use
-
-Created for CS 546 coursework. See the profiler README for integration details and known limitations (Ray Core–centric capture, post-hoc timing only).
+Course details and citations are in `report/report.tex`.

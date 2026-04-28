@@ -1,5 +1,4 @@
-# Ray Core profiler + State API + optional dashboard deps
 ray[default]>=2.9,<3
-
-# Optional: Modin skew benchmark (benchmarks/modin_skew.py)
-# pip install "modin[ray]>=0.30"
+modin
+daft
+numpy

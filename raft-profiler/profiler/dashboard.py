@@ -40,21 +40,31 @@ def _build_tasks_json(timing, resolved_deps, cp, breakdowns, stragglers=None):
     if stragglers:
         for s in stragglers:
             smap[s.task_id] = {"ratio": round(s.ratio, 1), "median_ms": round(s.median_ms, 1)}
-    name_counter = {}
     sorted_tids = sorted(timing.keys(), key=lambda t: timing[t]["start_ms"])
+                                                                            
+                                                                              
+                                                               
+    name_total: dict[str, int] = {}
+    for tid in sorted_tids:
+        nm = timing[tid]["name"]
+        name_total[nm] = name_total.get(nm, 0) + 1
+    name_counter: dict[str, int] = {}
     tid_index = {}
     for tid in sorted_tids:
-        name = timing[tid]["name"]
-        idx = name_counter.get(name, 0)
-        name_counter[name] = idx + 1
+        nm = timing[tid]["name"]
+        idx = name_counter.get(nm, 0)
+        name_counter[nm] = idx + 1
         tid_index[tid] = idx
     tasks = []
     for tid, info in timing.items():
         bd = breakdowns.get(tid)
         on_cp = tid in cp.path_set
+        nm = info["name"]
+        label = nm if name_total.get(nm, 0) <= 1 else f"{nm}[{tid_index[tid]}]"
         tasks.append({
-            "id": tid, "name": info["name"],
-            "label": f"{info['name']}[{tid_index[tid]}]",
+            "id": tid, "name": nm,
+            "func_name": info.get("func_name", nm),
+            "label": label,
             "index": tid_index[tid],
             "start_ms": info["start_ms"], "end_ms": info["end_ms"],
             "exec_ms": round(info["exec_ms"], 2),
@@ -67,6 +77,8 @@ def _build_tasks_json(timing, resolved_deps, cp, breakdowns, stragglers=None):
             "total_ms": round(bd.total_ms, 2) if bd else round(info["exec_ms"], 2),
             "num_deps": len(resolved_deps.get(tid, [])),
             "straggler": smap.get(tid),
+            "top_user_fn": info.get("top_user_fn"),
+            "user_fns": info.get("user_fns") or [],
         })
     return json.dumps(tasks)
 
@@ -111,7 +123,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 .cpn .nm{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;font-weight:600;color:#993d3d}
 .cpn .tm{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;font-weight:600;margin-top:1px}
 .cpn .sub{font-size:10px;color:#aaa;margin-top:2px}
+.cpn .ufn{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#2d7a3a;margin-top:3px;font-weight:600}
+.cpn .ufn .src{color:#888;font-weight:400}
 .cparr{padding:0 4px;color:#ccc;font-size:14px}
+.ufn-tag{display:inline-block;background:#eef6ee;color:#2d7a3a;border-radius:3px;padding:1px 6px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;margin-left:6px}
+.ufn-tag .src{color:#888}
+.row .ufn-row{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#2d7a3a;margin-left:4px}
 
 .tabs{display:flex;gap:0;border-bottom:1px solid #e5e5e5;padding:0 20px}
 .tab{padding:10px 16px;font-size:13px;color:#999;cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:0;border-left:0;border-right:0;font-family:inherit}
@@ -245,8 +262,13 @@ document.getElementById("tabbar").addEventListener("click",function(e){
     else if(t.queue_ms===biggest&&t.queue_ms>0)reason="queued";
     else if(t.overhead_ms===biggest&&t.overhead_ms>0)reason="overhead";
     var strag=t.straggler?" / "+t.straggler.ratio+"x straggler":"";
+    var ufn="";
+    if(t.top_user_fn){
+      ufn='<div class="ufn">'+t.top_user_fn.name+
+          '<div class="src">'+t.top_user_fn.source+'</div></div>';
+    }
     var n=document.createElement("div");n.className="cpn";
-    n.innerHTML='<div class="nm">'+t.label+'</div><div class="tm">'+fms(t.exec_ms)+'</div><div class="sub">'+reason+strag+'</div>';
+    n.innerHTML='<div class="nm">'+t.label+'</div><div class="tm">'+fms(t.exec_ms)+'</div><div class="sub">'+reason+strag+'</div>'+ufn;
     f.appendChild(n);
     if(i<CP.length-1){var a=document.createElement("div");a.className="cparr";a.innerHTML="&rarr;";f.appendChild(a)}
   });
@@ -288,10 +310,33 @@ var origCP=recomputeCP({});
     var queueP=pct(t.queue_ms,total);
     var compP=pct(t.compute_ms,total);
 
+    // Surface user-function attribution as the most actionable signal:
+    // if a critical-path task spent a meaningful slice of its time inside
+    // a tracked user function, that function is the *real* bottleneck.
+    if(t.top_user_fn){
+      var u=t.top_user_fn;
+      var sharePct=pct(u.elapsed_ms,t.exec_ms||1);
+      var others="";
+      if(t.user_fns&&t.user_fns.length>1){
+        others=' Other tracked functions in this task: '+
+          t.user_fns.slice(1,4).map(function(o){
+            return '<span class="mono">'+o.name+'</span> ('+fms(o.elapsed_ms)+')';
+          }).join(', ')+'.';
+      }
+      recs.push({pri:"high",text:
+        'Critical-path task <b>'+t.label+'</b> spent '+fms(u.elapsed_ms)+
+        ' ('+sharePct+'% of its '+fms(t.exec_ms)+' runtime) inside your '+
+        '<span class="mono">'+u.name+'</span> at '+
+        '<span class="mono">'+u.source+'</span>'+
+        (u.calls>1?' across '+u.calls+' calls':'')+'. '+
+        'This is the user code responsible for the bottleneck. '+
+        'Optimizing <span class="mono">'+u.name+'</span> directly will reduce total runtime.'+others});
+    }
+
     if(t.straggler){
       recs.push({pri:"high",text:
         '<b>'+t.label+'</b> is a straggler. It took '+fms(t.exec_ms)+
-        ' but the median for <span class="mono">'+t.name+'</span> is '+fms(t.straggler.median_ms)+
+        ' but the median for <span class="mono">'+(t.func_name||t.name)+'</span> is '+fms(t.straggler.median_ms)+
         ' ('+t.straggler.ratio+'x slower). This single instance is dragging down the entire job. '+
         'Investigate why this specific task was slow: resource contention, data skew, or a slow machine.'});
     }
@@ -362,7 +407,9 @@ var origCP=recomputeCP({});
   sorted.forEach(function(t){if(t.start_ms<minT)minT=t.start_ms;if(t.end_ms>maxT)maxT=t.end_ms});
   var span=maxT-minT||1;
   var stages=[],smap={};
-  sorted.forEach(function(t){if(!smap[t.name]){smap[t.name]=[];stages.push(t.name)}smap[t.name].push(t)});
+  // Group by underlying Python function so all `predictor_N` rows still
+  // sit under one `predictor` stage header. Falls back to display name.
+  sorted.forEach(function(t){var k=t.func_name||t.name;if(!smap[k]){smap[k]=[];stages.push(k)}smap[k].push(t)});
 
   var html='<div class="legend">';
   html+='<div class="lg"><div class="ld" style="background:#7f77dd"></div>Dep wait: task waiting for upstream results</div>';
@@ -370,6 +417,7 @@ var origCP=recomputeCP({});
   html+='<div class="lg"><div class="ld" style="background:#999"></div>Overhead: scheduling/data transfer</div>';
   html+='<div class="lg"><div class="ld" style="background:#3a7bd5"></div>Compute: running function code</div>';
   html+='<div class="lg"><div class="ld" style="background:#993d3d"></div>Critical: on the critical path</div>';
+  html+='<div class="lg"><div class="ld" style="background:#2d7a3a"></div>&rarr; user fn: tracked Python function that ran inside this task</div>';
   html+='</div>';
 
   stages.forEach(function(name){
@@ -378,14 +426,16 @@ var origCP=recomputeCP({});
     tasks.forEach(function(t){
       var isCP=t.on_cp;
       var rs=(t.start_ms-minT)/span*100;var ts=t.end_ms-t.start_ms||1;var tp=ts/span*100;
+      var ufnLine=t.top_user_fn?'<br>user fn: '+t.top_user_fn.name+' ('+t.top_user_fn.source+', '+fms(t.top_user_fn.elapsed_ms)+')':'';
       var th='<b>'+t.label+'</b>'+(isCP?' critical':'')+(t.straggler?'<br>'+t.straggler.ratio+'x straggler':'')+
         '<br>exec: '+t.exec_ms.toFixed(1)+'ms<br>dep: '+t.dependency_ms.toFixed(1)+' queue: '+t.queue_ms.toFixed(1)+
-        '<br>overhead: '+t.overhead_ms.toFixed(1)+' compute: '+t.compute_ms.toFixed(1);
+        '<br>overhead: '+t.overhead_ms.toFixed(1)+' compute: '+t.compute_ms.toFixed(1)+ufnLine;
       var bars='';var o=rs;
       var segs=[["#7f77dd",t.dependency_ms],["#ba7517",t.queue_ms],["#999",t.overhead_ms],[isCP?"#993d3d":"#3a7bd5",t.compute_ms]];
       segs.forEach(function(s){var w=s[1]/ts*tp;if(w>0.05)bars+='<div class="b" style="left:'+o+'%;width:'+w+'%;background:'+s[0]+'" onmouseover="st(event,\''+th.replace(/'/g,"\\&#39;")+'\')" onmouseleave="ht()"></div>';o+=w});
       var stragI=t.straggler?'<span class="stag-i">'+t.straggler.ratio+'x</span>':'';
-      html+='<div class="row"><div class="rl'+(isCP?' cp':'')+'">'+t.label+stragI+'</div>';
+      var ufnI=t.top_user_fn?'<span class="ufn-row"> &rarr; '+t.top_user_fn.name+'</span>':'';
+      html+='<div class="row"><div class="rl'+(isCP?' cp':'')+'">'+t.label+stragI+ufnI+'</div>';
       html+='<div class="track'+(isCP?' cp':'')+'">'+bars;
       if(tp>3)html+='<div class="tl-time">'+fms(t.exec_ms)+'</div>';
       html+='</div></div>';
@@ -429,7 +479,7 @@ function rDAG(){
 (function(){
   var sk="on_cp",sd=-1;
   function rn(){var rw=T.slice().sort(function(a,b){var va=a[sk],vb=b[sk];if(typeof va==="string"){va=va.toLowerCase();vb=vb.toLowerCase()}return sd*(va<vb?-1:va>vb?1:0)});
-    document.getElementById("p-tbl").innerHTML='<table class="tbl"><thead><tr><th onclick="rs(\'label\')">Task</th><th onclick="rs(\'on_cp\')">Critical</th><th onclick="rs(\'exec_ms\')">Exec</th><th onclick="rs(\'dependency_ms\')">Dep wait</th><th onclick="rs(\'queue_ms\')">Queue</th><th onclick="rs(\'overhead_ms\')">Overhead</th><th onclick="rs(\'compute_ms\')">Compute</th><th>Split</th></tr></thead><tbody>'+rw.map(function(t){var tot=t.total_ms||t.exec_ms||1;return '<tr class="'+(t.on_cp?'cpr':'')+'"><td class="mono">'+t.label+(t.straggler?'<span class="stag-b">'+t.straggler.ratio+'x</span>':'')+'</td><td><span class="bcp '+(t.on_cp?'y':'n')+'">'+(t.on_cp?'yes':'no')+'</span></td><td class="mono">'+t.exec_ms.toFixed(1)+'</td><td class="mono">'+t.dependency_ms.toFixed(1)+'</td><td class="mono">'+t.queue_ms.toFixed(1)+'</td><td class="mono">'+t.overhead_ms.toFixed(1)+'</td><td class="mono">'+t.compute_ms.toFixed(1)+'</td><td><div class="mb"><div style="width:'+pct(t.dependency_ms,tot)+'%;background:#7f77dd"></div><div style="width:'+pct(t.queue_ms,tot)+'%;background:#ba7517"></div><div style="width:'+pct(t.overhead_ms,tot)+'%;background:#999"></div><div style="width:'+pct(t.compute_ms,tot)+'%;background:'+(t.on_cp?'#993d3d':'#3a7bd5')+'"></div></div></td></tr>'}).join('')+'</tbody></table>';}
+    document.getElementById("p-tbl").innerHTML='<table class="tbl"><thead><tr><th onclick="rs(\'label\')">Task</th><th>User fn</th><th onclick="rs(\'on_cp\')">Critical</th><th onclick="rs(\'exec_ms\')">Exec</th><th onclick="rs(\'dependency_ms\')">Dep wait</th><th onclick="rs(\'queue_ms\')">Queue</th><th onclick="rs(\'overhead_ms\')">Overhead</th><th onclick="rs(\'compute_ms\')">Compute</th><th>Split</th></tr></thead><tbody>'+rw.map(function(t){var tot=t.total_ms||t.exec_ms||1;var u=t.top_user_fn?'<span class="ufn-tag">'+t.top_user_fn.name+' <span class="src">'+t.top_user_fn.source+'</span> '+fms(t.top_user_fn.elapsed_ms)+'</span>':'<span style="color:#ccc">&mdash;</span>';return '<tr class="'+(t.on_cp?'cpr':'')+'"><td class="mono">'+t.label+(t.straggler?'<span class="stag-b">'+t.straggler.ratio+'x</span>':'')+'</td><td>'+u+'</td><td><span class="bcp '+(t.on_cp?'y':'n')+'">'+(t.on_cp?'yes':'no')+'</span></td><td class="mono">'+t.exec_ms.toFixed(1)+'</td><td class="mono">'+t.dependency_ms.toFixed(1)+'</td><td class="mono">'+t.queue_ms.toFixed(1)+'</td><td class="mono">'+t.overhead_ms.toFixed(1)+'</td><td class="mono">'+t.compute_ms.toFixed(1)+'</td><td><div class="mb"><div style="width:'+pct(t.dependency_ms,tot)+'%;background:#7f77dd"></div><div style="width:'+pct(t.queue_ms,tot)+'%;background:#ba7517"></div><div style="width:'+pct(t.overhead_ms,tot)+'%;background:#999"></div><div style="width:'+pct(t.compute_ms,tot)+'%;background:'+(t.on_cp?'#993d3d':'#3a7bd5')+'"></div></div></td></tr>'}).join('')+'</tbody></table>';}
   window.rs=function(k){if(sk===k)sd*=-1;else{sk=k;sd=-1}rn()};rn();
 })();
 

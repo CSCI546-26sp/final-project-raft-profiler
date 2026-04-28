@@ -24,7 +24,7 @@ class TaskBreakdown:
     queue_ms:       float
     overhead_ms:    float
     compute_ms:     float
-    waiting_ms:     float    # = dependency + queue + overhead
+    waiting_ms:     float                                     
     total_ms:       float
 
     def waiting_pct(self) -> float:
