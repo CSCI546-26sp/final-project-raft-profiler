@@ -30,12 +30,15 @@ htmlcov/
 **/session_latest
 **/logs/
 raft-profiler/output/
+raft-profiler/report/out/
+tools/tectonic/*.zip
 raft-profiler/log.txt
 *.log
 
 # IDE & OS
 .idea/
-.vscode/
+# Keep .vscode/ for LaTeX Workshop + project tasks (do not ignore whole folder)
+.vscode/*.log
 *.swp
 *.swo
 Thumbs.db
@@ -43,3 +46,6 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+*.json
+*.exe
+*.tex
