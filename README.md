@@ -8,7 +8,7 @@ Course workspace containing **ray-profiler**: a post-hoc **critical path profile
 |------|--------|
 | [`ray-profiler/`](ray-profiler/) | Library, benchmarks, HTML dashboard generator |
 | [`ray-profiler/README.md`](ray-profiler/README.md) | Setup, how to run benchmarks, limitations |
-| [`ray-profiler/report/`](ray-profiler/report/) | Course report (`report.tex`; build PDF locally or on Overleaf) |
+| [`ray-profiler/report/`](ray-profiler/report/) | Course report |
 
 
 ## Quick start
@@ -28,4 +28,4 @@ Generated dashboards usually go under `ray-profiler/output/`
 
 Ray’s UI shows timelines and utilization, not which tasks bounded wall-clock time. This project records ref edges at submission, combines them with State API timings, computes the weighted longest path (critical path), and renders a static HTML report.
 
-Course details and citations are in `ray-profiler/report/report.pdf`.
+Course details and citations are in `ray-profiler/report/report_ray.pdf`.
