@@ -5,7 +5,7 @@ import argparse
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from profiler import profile, print_critical_path
+from profiler import profile, print_critical_path, dashboard_port
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--inject-fault", type=int, default=-1)
@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 assert args.num_leaves > 0 and (args.num_leaves & (args.num_leaves - 1)) == 0
 
-ray.init(include_dashboard=True, dashboard_port=8265)
+ray.init(include_dashboard=True, dashboard_port=dashboard_port())
 profile()
 time.sleep(3)
 

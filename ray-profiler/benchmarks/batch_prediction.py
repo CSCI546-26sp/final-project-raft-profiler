@@ -5,14 +5,14 @@ import argparse
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from profiler import profile, print_critical_path, track_function
+from profiler import profile, print_critical_path, track_function, dashboard_port
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--fault-type", type=str, choices=["none", "loader", "predictor"], default="none")
 parser.add_argument("--fault-delay", type=float, default=2.0)
 parser.add_argument("--num-batches", type=int, default=5)
 args = parser.parse_args()
-ray.init(include_dashboard=True, dashboard_port=8265)
+ray.init(include_dashboard=True, dashboard_port=dashboard_port())
 profile()
 time.sleep(2)
 @track_function

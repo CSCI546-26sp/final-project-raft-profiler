@@ -16,7 +16,7 @@ import numpy as np
 import ray
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from profiler import print_critical_path, profile, track_function
+from profiler import print_critical_path, profile, track_function, dashboard_port
 
 parser = argparse.ArgumentParser(description="Parameter server benchmark (Ray profiler demo)")
 parser.add_argument("--num-workers", type=int, default=4)
@@ -125,7 +125,7 @@ def run_async(ps, workers: list, iterations: int, updates_total: int):
 
 
 if __name__ == "__main__":
-    ray.init(include_dashboard=True, dashboard_port=8265)
+    ray.init(include_dashboard=True, dashboard_port=dashboard_port())
     profile()
     time.sleep(2)
 

@@ -3,124 +3,124 @@
     "1e8ff6d236132784ffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391145434,
-      "end_ms": 1777391150456,
-      "exec_ms": 5022,
-      "worker_id": "0f7983634b71feaa3d829a892882c578ee4bf22cab5f24d26dd3b7d6",
-      "worker_pid": 24384,
+      "start_ms": 1777410681695,
+      "end_ms": 1777410686713,
+      "exec_ms": 5018,
+      "worker_id": "5c238ca8039cc72f4d2191551de4eef68f66a801fa06a550f133f320",
+      "worker_pid": 33616,
       "user_fns": [
         {
           "name": "heavy_work",
-          "source": "modin_skew.py:16",
-          "elapsed_ms": 5002.76,
+          "source": "modin_skew.py:26",
+          "elapsed_ms": 5000.23,
           "calls": 3
         }
       ],
       "top_user_fn": {
         "name": "heavy_work",
-        "source": "modin_skew.py:16",
-        "elapsed_ms": 5002.76,
+        "source": "modin_skew.py:26",
+        "elapsed_ms": 5000.23,
         "calls": 3
       }
     },
     "32d950ec0ccf9d2affffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391144327,
-      "end_ms": 1777391144850,
-      "exec_ms": 523,
-      "worker_id": "23b1c40249a30729b7d1f983f954700694a32adc12cd10f4a50b622c",
-      "worker_pid": 39288
+      "start_ms": 1777410680596,
+      "end_ms": 1777410681232,
+      "exec_ms": 636,
+      "worker_id": "e24364062ee99e5563b907c64a7146aeb5b8dd8a53c9173e7173a86c",
+      "worker_pid": 24720
     },
     "359ec6ce30d3ca2dffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391145432,
-      "end_ms": 1777391145437,
-      "exec_ms": 5,
-      "worker_id": "7603069f0513fe6e21185097b5e82dadd0085d0d68fe676def43e4d2",
-      "worker_pid": 9484
+      "start_ms": 1777410681695,
+      "end_ms": 1777410681701,
+      "exec_ms": 6,
+      "worker_id": "e24364062ee99e5563b907c64a7146aeb5b8dd8a53c9173e7173a86c",
+      "worker_pid": 24720
     },
     "80e22aed7718a125ffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391145423,
-      "end_ms": 1777391145431,
-      "exec_ms": 8,
-      "worker_id": "7603069f0513fe6e21185097b5e82dadd0085d0d68fe676def43e4d2",
-      "worker_pid": 9484
+      "start_ms": 1777410681679,
+      "end_ms": 1777410681693,
+      "exec_ms": 14,
+      "worker_id": "de9906f7df2f221c44d7c1f6a0dd5b254cbc4a06b131db8c8debd90d",
+      "worker_pid": 39988
     },
     "82891771158d68c1ffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391145422,
-      "end_ms": 1777391145430,
-      "exec_ms": 8,
-      "worker_id": "23b1c40249a30729b7d1f983f954700694a32adc12cd10f4a50b622c",
-      "worker_pid": 39288
+      "start_ms": 1777410681678,
+      "end_ms": 1777410681693,
+      "exec_ms": 15,
+      "worker_id": "e24364062ee99e5563b907c64a7146aeb5b8dd8a53c9173e7173a86c",
+      "worker_pid": 24720
     },
     "85748392bcd969ccffffffffffffffffffffffff01000000": {
       "name": "_remote_exec_single_chain",
       "func_name": "_remote_exec_single_chain",
-      "start_ms": 1777391150457,
-      "end_ms": 1777391150470,
-      "exec_ms": 13,
-      "worker_id": "0f7983634b71feaa3d829a892882c578ee4bf22cab5f24d26dd3b7d6",
-      "worker_pid": 24384
+      "start_ms": 1777410686715,
+      "end_ms": 1777410686726,
+      "exec_ms": 11,
+      "worker_id": "5c238ca8039cc72f4d2191551de4eef68f66a801fa06a550f133f320",
+      "worker_pid": 33616
     },
     "8849b62d89cb30f9ffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391145423,
-      "end_ms": 1777391145430,
-      "exec_ms": 7,
-      "worker_id": "e98af096d95febb53327c6cd03a794e7906aec828525ee720214493c",
-      "worker_pid": 39352
+      "start_ms": 1777410681679,
+      "end_ms": 1777410681693,
+      "exec_ms": 14,
+      "worker_id": "5c238ca8039cc72f4d2191551de4eef68f66a801fa06a550f133f320",
+      "worker_pid": 33616
     },
     "c2668a65bda616c1ffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391144326,
-      "end_ms": 1777391144849,
-      "exec_ms": 523,
-      "worker_id": "7603069f0513fe6e21185097b5e82dadd0085d0d68fe676def43e4d2",
-      "worker_pid": 9484
+      "start_ms": 1777410680587,
+      "end_ms": 1777410681228,
+      "exec_ms": 641,
+      "worker_id": "de9906f7df2f221c44d7c1f6a0dd5b254cbc4a06b131db8c8debd90d",
+      "worker_pid": 39988
     },
     "d695f922effe6d99ffffffffffffffffffffffff01000000": {
       "name": "_remote_exec_multi_chain",
       "func_name": "_remote_exec_multi_chain",
-      "start_ms": 1777391150472,
-      "end_ms": 1777391150474,
-      "exec_ms": 2,
-      "worker_id": "0f7983634b71feaa3d829a892882c578ee4bf22cab5f24d26dd3b7d6",
-      "worker_pid": 24384
+      "start_ms": 1777410686729,
+      "end_ms": 1777410686735,
+      "exec_ms": 6,
+      "worker_id": "5c238ca8039cc72f4d2191551de4eef68f66a801fa06a550f133f320",
+      "worker_pid": 33616
     },
     "e0dc174c83599034ffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391144336,
-      "end_ms": 1777391144850,
-      "exec_ms": 514,
-      "worker_id": "e98af096d95febb53327c6cd03a794e7906aec828525ee720214493c",
-      "worker_pid": 39352
+      "start_ms": 1777410680597,
+      "end_ms": 1777410681232,
+      "exec_ms": 635,
+      "worker_id": "5c238ca8039cc72f4d2191551de4eef68f66a801fa06a550f133f320",
+      "worker_pid": 33616
     },
     "f4402ec78d3a2607ffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391144842,
-      "end_ms": 1777391145404,
-      "exec_ms": 562,
-      "worker_id": "0f7983634b71feaa3d829a892882c578ee4bf22cab5f24d26dd3b7d6",
-      "worker_pid": 24384
+      "start_ms": 1777410681221,
+      "end_ms": 1777410681663,
+      "exec_ms": 442,
+      "worker_id": "4a0a53bbf81fd99fd2e1e976e9eef6d774cbb690fda966d47c4ae753",
+      "worker_pid": 7864
     },
     "f91b78d7db9a6593ffffffffffffffffffffffff01000000": {
       "name": "_deploy_ray_func",
       "func_name": "_deploy_ray_func",
-      "start_ms": 1777391145422,
-      "end_ms": 1777391145430,
-      "exec_ms": 8,
-      "worker_id": "0f7983634b71feaa3d829a892882c578ee4bf22cab5f24d26dd3b7d6",
-      "worker_pid": 24384
+      "start_ms": 1777410681678,
+      "end_ms": 1777410681693,
+      "exec_ms": 15,
+      "worker_id": "4a0a53bbf81fd99fd2e1e976e9eef6d774cbb690fda966d47c4ae753",
+      "worker_pid": 7864
     }
   },
   "resolved_deps": {
@@ -171,100 +171,100 @@
   "cp_total_ms": 6148.0,
   "breakdowns": {
     "1e8ff6d236132784ffffffffffffffffffffffff01000000": {
-      "dependency_ms": 0.0,
-      "queue_ms": 1.0,
-      "overhead_ms": 0.0,
-      "compute_ms": 5022.0,
-      "waiting_ms": 1.0,
-      "total_ms": 5023.0
+      "dependency_ms": 8.0,
+      "queue_ms": 0.0,
+      "overhead_ms": 1.0,
+      "compute_ms": 5018.0,
+      "waiting_ms": 9.0,
+      "total_ms": 5027.0
     },
     "32d950ec0ccf9d2affffffffffffffffffffffff01000000": {
-      "dependency_ms": 1.0,
-      "queue_ms": 3.0,
+      "dependency_ms": 0.0,
+      "queue_ms": 10.0,
       "overhead_ms": 2.0,
-      "compute_ms": 523.0,
-      "waiting_ms": 6.0,
-      "total_ms": 529.0
+      "compute_ms": 636.0,
+      "waiting_ms": 12.0,
+      "total_ms": 648.0
     },
     "359ec6ce30d3ca2dffffffffffffffffffffffff01000000": {
-      "dependency_ms": 1.0,
+      "dependency_ms": 9.0,
       "queue_ms": 1.0,
-      "overhead_ms": 0.0,
-      "compute_ms": 5.0,
-      "waiting_ms": 2.0,
-      "total_ms": 7.0
+      "overhead_ms": 1.0,
+      "compute_ms": 6.0,
+      "waiting_ms": 11.0,
+      "total_ms": 17.0
     },
     "80e22aed7718a125ffffffffffffffffffffffff01000000": {
       "dependency_ms": 1.0,
-      "queue_ms": 1.0,
+      "queue_ms": 0.0,
       "overhead_ms": 1.0,
-      "compute_ms": 8.0,
-      "waiting_ms": 3.0,
-      "total_ms": 11.0
+      "compute_ms": 14.0,
+      "waiting_ms": 2.0,
+      "total_ms": 16.0
     },
     "82891771158d68c1ffffffffffffffffffffffff01000000": {
       "dependency_ms": 0.0,
       "queue_ms": 1.0,
-      "overhead_ms": 1.0,
-      "compute_ms": 8.0,
-      "waiting_ms": 2.0,
-      "total_ms": 10.0
+      "overhead_ms": 0.0,
+      "compute_ms": 15.0,
+      "waiting_ms": 1.0,
+      "total_ms": 16.0
     },
     "85748392bcd969ccffffffffffffffffffffffff01000000": {
-      "dependency_ms": 5019.0,
-      "queue_ms": 1.0,
+      "dependency_ms": 5023.0,
+      "queue_ms": 2.0,
       "overhead_ms": 0.0,
-      "compute_ms": 13.0,
-      "waiting_ms": 5020.0,
-      "total_ms": 5033.0
+      "compute_ms": 11.0,
+      "waiting_ms": 5025.0,
+      "total_ms": 5036.0
     },
     "8849b62d89cb30f9ffffffffffffffffffffffff01000000": {
       "dependency_ms": 0.0,
-      "queue_ms": 2.0,
+      "queue_ms": 1.0,
       "overhead_ms": 1.0,
-      "compute_ms": 7.0,
-      "waiting_ms": 3.0,
-      "total_ms": 10.0
+      "compute_ms": 14.0,
+      "waiting_ms": 2.0,
+      "total_ms": 16.0
     },
     "c2668a65bda616c1ffffffffffffffffffffffff01000000": {
       "dependency_ms": 0.0,
-      "queue_ms": 3.0,
+      "queue_ms": 2.0,
       "overhead_ms": 2.0,
-      "compute_ms": 523.0,
-      "waiting_ms": 5.0,
-      "total_ms": 528.0
+      "compute_ms": 641.0,
+      "waiting_ms": 4.0,
+      "total_ms": 645.0
     },
     "d695f922effe6d99ffffffffffffffffffffffff01000000": {
-      "dependency_ms": 5030.0,
+      "dependency_ms": 5031.0,
       "queue_ms": 1.0,
-      "overhead_ms": 1.0,
-      "compute_ms": 2.0,
-      "waiting_ms": 5032.0,
-      "total_ms": 5034.0
+      "overhead_ms": 2.0,
+      "compute_ms": 6.0,
+      "waiting_ms": 5034.0,
+      "total_ms": 5040.0
     },
     "e0dc174c83599034ffffffffffffffffffffffff01000000": {
-      "dependency_ms": 1.0,
-      "queue_ms": 12.0,
+      "dependency_ms": 0.0,
+      "queue_ms": 11.0,
       "overhead_ms": 2.0,
-      "compute_ms": 514.0,
-      "waiting_ms": 15.0,
-      "total_ms": 529.0
+      "compute_ms": 635.0,
+      "waiting_ms": 13.0,
+      "total_ms": 648.0
     },
     "f4402ec78d3a2607ffffffffffffffffffffffff01000000": {
       "dependency_ms": 0.0,
-      "queue_ms": 519.0,
-      "overhead_ms": 1.0,
-      "compute_ms": 562.0,
-      "waiting_ms": 520.0,
-      "total_ms": 1082.0
+      "queue_ms": 635.0,
+      "overhead_ms": 2.0,
+      "compute_ms": 442.0,
+      "waiting_ms": 637.0,
+      "total_ms": 1079.0
     },
     "f91b78d7db9a6593ffffffffffffffffffffffff01000000": {
       "dependency_ms": 0.0,
       "queue_ms": 1.0,
-      "overhead_ms": 2.0,
-      "compute_ms": 8.0,
-      "waiting_ms": 3.0,
-      "total_ms": 11.0
+      "overhead_ms": 1.0,
+      "compute_ms": 15.0,
+      "waiting_ms": 2.0,
+      "total_ms": 17.0
     }
   }
 }

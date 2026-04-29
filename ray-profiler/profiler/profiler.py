@@ -12,6 +12,7 @@ from .what_if import what_if_speedup
 from .live_profiler import LiveProfiler
 from .run_comparison import save_run
 from .dashboard import generate_dashboard
+from .ray_dashboard import dashboard_port
 from .user_fn_tracker import (
     ensure_tracker,
     enable_pickle_by_value,
@@ -333,7 +334,7 @@ def run_profiled(fn=None, output_html="ray_profiler_dashboard.html",
                  save_json="run_profile.json", job_label="Ray Job"):
     def decorator(func):
         def wrapper(*args, **kwargs):
-            ray.init(include_dashboard=True, dashboard_port=8265)
+            ray.init(include_dashboard=True, dashboard_port=dashboard_port())
             profile()
             time.sleep(3)
             try:

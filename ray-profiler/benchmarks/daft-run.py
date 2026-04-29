@@ -17,11 +17,11 @@ import os
 
                                                               
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from profiler import profile, print_critical_path
+from profiler import profile, print_critical_path, dashboard_port
 
                            
                                                                       
-ray.init(num_cpus=4, ignore_reinit_error=True)
+ray.init(num_cpus=4, include_dashboard=True, dashboard_port=dashboard_port(), ignore_reinit_error=True)
 profile()
 
                                               

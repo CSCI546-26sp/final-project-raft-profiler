@@ -4,7 +4,7 @@ import random
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from profiler import profile, print_critical_path
+from profiler import profile, print_critical_path, dashboard_port
 
 profile()
 
@@ -43,7 +43,7 @@ def run_training_epoch():
 
 
 if __name__ == "__main__":
-    ray.init()
+    ray.init(include_dashboard=True, dashboard_port=dashboard_port())
 
     start = time.time()
     run_training_epoch()

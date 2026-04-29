@@ -5,7 +5,7 @@ import argparse
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from profiler import profile, print_critical_path
+from profiler import profile, print_critical_path, dashboard_port
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--inject-fault", type=int, default=-1,
@@ -15,7 +15,7 @@ parser.add_argument("--num-mappers",  type=int, default=4)
 parser.add_argument("--num-reducers", type=int, default=2)
 args = parser.parse_args()
 
-ray.init(num_cpus=2, include_dashboard=True, dashboard_port=8265)
+ray.init(num_cpus=2, include_dashboard=True, dashboard_port=dashboard_port())
 profile()
 time.sleep(3)
 

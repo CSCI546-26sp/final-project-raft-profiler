@@ -6,9 +6,9 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ray.util.state import list_tasks
-from profiler import profile, print_critical_path
+from profiler import profile, print_critical_path, dashboard_port
 
-ray.init(include_dashboard=True, dashboard_port=8265)
+ray.init(include_dashboard=True, dashboard_port=dashboard_port())
 profile()
 time.sleep(3)
 
