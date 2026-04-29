@@ -1,19 +1,21 @@
-# raft-profiler
+# ray-profiler
 
 A critical path profiler for Ray jobs. It answers one question Ray's dashboard doesn't: which tasks actually determined when your job finished?
 
 ## Repository layout
 
+From the course repo root, the profiler project lives under **`ray-profiler/`**. That directory is laid out as follows:
+
 ```
-raft-profiler/
-  profiler/
-  benchmarks/
+ray-profiler/
+  profiler/           # Python package: instrumentation, critical path, HTML dashboard
+  benchmarks/         # Runnable Ray workloads (map-reduce, batch prediction, etc.)
+  report/             # Course report
+  output/             # Generated HTML and JSON (gitignored)
   requirements.txt
-  report/
-  output/
 ```
 
-`output/` holds generated HTML and JSON (gitignored). The course report LaTeX lives under `report/`.
+`output/` holds generated HTML and JSON (gitignored). The course report LaTeX lives under `report/`. Sample or captured timing data may appear as `run_profile.json` at the project root when you run the profiler.
 
 ## Setup
 
@@ -57,7 +59,7 @@ Optional: decorate hot helpers with `track_function` (see `user_fn_tracker.py`) 
 
 ## Running the benchmarks
 
-Run from the `raft-profiler` directory.
+Run from the `ray-profiler` directory (the folder that contains `profiler/`, `benchmarks/`, and `requirements.txt`).
 
 **Map-reduce**
 
